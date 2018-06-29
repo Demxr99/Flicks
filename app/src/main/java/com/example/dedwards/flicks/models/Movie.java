@@ -6,7 +6,6 @@ import org.parceler.Parcel;
 
 @Parcel
 public class Movie {
-//    public static int id;
     // values from API to keep track off
     String title;
     String overview;

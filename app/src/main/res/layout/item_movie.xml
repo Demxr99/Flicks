@@ -32,5 +32,6 @@
         android:layout_below="@+id/tvTitle"
         android:layout_toEndOf="@+id/ivPosterImage"
         android:textColor="#ffffff"
+        android:scrollbars="vertical"
         android:text="Movie overview and synopsis" />
 </RelativeLayout>

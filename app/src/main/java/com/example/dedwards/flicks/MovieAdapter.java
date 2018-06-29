@@ -59,10 +59,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             if (position != RecyclerView.NO_POSITION) {
                 // get the movie at position
                 Movie movie = movies.get(position);
+//                Config config = getConfig();
                 // create intent for the new activity
                 Intent intent = new Intent(context, MovieDetailsActivity.class);
                 // serialize the movie using parceler, use its short name as a key
                 intent.putExtra(Movie.class.getSimpleName(), Parcels.wrap(movie));
+//                intent.putExtra(Config.class.getSimpleName(), Parcels.wrap(config));
                 // show the activity
                 context.startActivity(intent);
             }

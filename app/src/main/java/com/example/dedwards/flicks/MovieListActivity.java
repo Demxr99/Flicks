@@ -129,31 +129,6 @@ public class MovieListActivity extends AppCompatActivity {
 
     }
 
-    // get movie trailer
-    private void getTrailer(final Movie movie){
-        // create the URL
-        String url = API_BASE_URL + "/movie/" +  Integer.toString(movie.id) + "/videos";
-        // assign request parameters
-        RequestParams params = new RequestParams();
-        params.put(API_KEY_PARAM, getString(R.string.youtube_api_key));
-        client.get(url, params, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // load the results from API
-                try {
-                    JSONArray results = response.getJSONArray("results");
-                    Log.i(TAG, String.format("Loaded movie with id %s", movie.id));
-                } catch (JSONException e) {
-                    logError("Failed to parse now playing movie trailer", e, true);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                logError("Failed to get movie data from Videos endpoint", throwable, true);
-            }
-        });
-    }
 
     // handle errors, log and report to user
     private void logError(String message, Throwable error, boolean alertUser){
