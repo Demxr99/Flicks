@@ -12,10 +12,11 @@ import com.loopj.android.http.AsyncHttpClient;
 
 import org.parceler.Parcels;
 
+import static com.example.dedwards.flicks.MovieDetailsActivity.VIDEO_ID;
+
 
 public class MovieTrailerActivity extends YouTubeBaseActivity {
 
-    public final static String TAG = "MovieTrailerActivity";
     AsyncHttpClient client;
     Movie movie;
 
@@ -28,7 +29,7 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
         movie = Parcels.unwrap(getIntent().getParcelableExtra(Movie.class.getSimpleName()));
 
         // temporary test video id -- TODO replace with movie trailer video id
-        final String videoId = "tKodtNFpzBA";
+        final String videoId = getIntent().getStringExtra(VIDEO_ID);
 
         // resolve the player view from the layout
         YouTubePlayerView playerView = (YouTubePlayerView) findViewById(R.id.player);

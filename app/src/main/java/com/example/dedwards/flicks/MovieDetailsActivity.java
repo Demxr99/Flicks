@@ -1,6 +1,7 @@
 package com.example.dedwards.flicks;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,19 +9,38 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dedwards.flicks.models.Config;
 import com.example.dedwards.flicks.models.Movie;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+import static com.example.dedwards.flicks.MovieListActivity.API_BASE_URL;
+import static com.example.dedwards.flicks.MovieListActivity.API_KEY_PARAM;
+import static com.example.dedwards.flicks.MovieListActivity.TAG;
+
+
 public class MovieDetailsActivity extends AppCompatActivity {
+
+    public static final String VIDEO_ID = "videoID";
+    public final static String YOUTUBE_API_KEY_PARAM= "youtube_api_key";
+
 
     // movie to be displayed
     Movie movie;
     Config config;
+    AsyncHttpClient client;
+    String videoId;
 
     // views to be displayed
     TextView tvTitle;
@@ -39,21 +59,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
         rbVoteAverage = findViewById(R.id.rbVoteAverage);
         tvImage = findViewById(R.id.tvImage);
 
-        tvImage.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View tvImage){
-                Intent i = new Intent(tvImage.getContext(), MovieTrailerActivity.class);
-                i.putExtra(Movie.class.getSimpleName(), Parcels.wrap(movie));
-                startActivity(i);
-            }
-        });
+        client = new AsyncHttpClient();
 
         // retrieve and unwrap movie parcel
         movie = Parcels.unwrap(getIntent().getParcelableExtra(Movie.class.getSimpleName()));
         config = Parcels.unwrap((getIntent().getParcelableExtra(Config.class.getSimpleName())));
         // logging information to confirm deserialization
         Log.d("MovieDetailsActivity", String.format("Showing details for '%s'", movie.getTitle()));
-
-//        imageUrl = "https://api.themoviedb.org/3/movie/" + movie.id + "/images";
 
         // set view objects
         tvTitle.setText(movie.getTitle());
@@ -73,45 +85,69 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .transform(new RoundedCornersTransformation(45 , 0))
                 .into(tvImage);
 
+        getMovieId();
+        setupOnClickListener();
     }
 
-    // get movie trailer
-//    private void getTrailer(){
-//        // create the URL
-//        String url = API_BASE_URL + "/movie/" +  Integer.toString(movie.id) + "/videos";
-//        // assign request parameters
-//        RequestParams params = new RequestParams();
-//        params.put(API_KEY_PARAM, getString(R.string.youtube_api_key));
-//
-//        client.get(url, params, new JsonHttpResponseHandler(){
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                // load the results from API
-//                try {
-//                    JSONArray results = response.getJSONArray("results");
-//                    JSONObject object = results.getJSONObject(0);
-//                    videoId = object.getString("key");
-//                    Log.i(TAG, String.format("VideoId is %s", videoId));
-//                } catch (JSONException e) {
-//                    logError("Failed to parse now playing movie trailer", e, true);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                logError("Failed to get movie data from Videos endpoint", throwable, true);
-//            }
-//        });
-//    }
-//
-//    // handle errors, log and report to user
-//    private void logError(String message, Throwable error, boolean alertUser){
-//        // log the error
-//        Log.e(TAG, message, error);
-//        // report to the user
-//        if (alertUser) {
-//            // show a long toast with the error message
-//            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-//        }
-//    }
+    private void setupOnClickListener(){
+        tvImage.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View tvImage){
+                Intent i = new Intent(tvImage.getContext(), MovieTrailerActivity.class);
+                i.putExtra(Movie.class.getSimpleName(), Parcels.wrap(movie));
+                i.putExtra(VIDEO_ID, videoId);
+                startActivity(i);
+            }
+        });
+    }
+
+    private void getMovieId(){
+        // create the URL
+        String url = API_BASE_URL + "/movie/" +  Integer.toString(movie.id) + "/videos";
+        // assign request parameters
+        RequestParams params = new RequestParams();
+        params.put(API_KEY_PARAM, getString(R.string.api_key));
+
+        client.get(url, params, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // load the results from API
+                try {
+                    JSONArray results = response.getJSONArray("results");
+                    JSONObject object = results.getJSONObject(0);
+                    videoId = object.getString("key");
+                    Log.i(TAG, String.format("VideoId is %s", videoId));
+                } catch (JSONException e) {
+                    logError("Failed to parse now playing movie trailer", e, true);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                logError("Failed to get movie data from Videos endpoint", throwable, true);
+            }
+        });
+    }
+
+    // handle errors, log and report to user
+    private void logError(String message, Throwable error, boolean alertUser){
+        // log the error
+        Log.e(TAG, message, error);
+        // report to the user
+        if (alertUser) {
+            // show a long toast with the error message
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
