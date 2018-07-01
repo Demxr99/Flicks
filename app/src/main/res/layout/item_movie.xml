@@ -21,8 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/ivPosterImage"
-        android:textColor="#ffffff"
         android:text="Movie Title"
+        android:textColor="#ffffff"
         android:textAppearance="@android:style/TextAppearance.Large" />
 
     <TextView

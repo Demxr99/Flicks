@@ -71,6 +71,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
         }
     }
 
+
+
     @NonNull
     // creates and inflates a new view
     @Override

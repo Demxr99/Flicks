@@ -1,9 +1,9 @@
 package com.example.dedwards.flicks;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,8 +33,6 @@ import static com.example.dedwards.flicks.MovieListActivity.TAG;
 public class MovieDetailsActivity extends AppCompatActivity {
 
     public static final String VIDEO_ID = "videoID";
-    public final static String YOUTUBE_API_KEY_PARAM= "youtube_api_key";
-
 
     // movie to be displayed
     Movie movie;
@@ -70,6 +68,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // set view objects
         tvTitle.setText(movie.getTitle());
         tvOverview.setText(movie.getOverview());
+        tvOverview.setMovementMethod(new ScrollingMovementMethod());
 
         float voteAverage = movie.getVoteAverage().floatValue();
         rbVoteAverage.setRating(voteAverage = voteAverage > 0 ? voteAverage / 2.0f : voteAverage);
@@ -136,18 +135,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         if (alertUser) {
             // show a long toast with the error message
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
         }
     }
 }
