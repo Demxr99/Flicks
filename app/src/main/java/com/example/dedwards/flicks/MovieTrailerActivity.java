@@ -2,7 +2,6 @@ package com.example.dedwards.flicks;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.dedwards.flicks.models.Movie;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -10,24 +9,15 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import cz.msebera.android.httpclient.Header;
-
-import static com.example.dedwards.flicks.MovieListActivity.API_BASE_URL;
-import static com.example.dedwards.flicks.MovieListActivity.API_KEY_PARAM;
 
 public class MovieTrailerActivity extends YouTubeBaseActivity {
 
+    public final static String TAG = "MovieTrailerActivity";
     AsyncHttpClient client;
     Movie movie;
-    String videoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +28,7 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
         movie = Parcels.unwrap(getIntent().getParcelableExtra(Movie.class.getSimpleName()));
 
         // temporary test video id -- TODO replace with movie trailer video id
-        getTrailer(movie);
+        final String videoId = "tKodtNFpzBA";
 
         // resolve the player view from the layout
         YouTubePlayerView playerView = (YouTubePlayerView) findViewById(R.id.player);
@@ -59,41 +49,5 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
                 Log.e("MovieTrailerActivity", "Error initializing YouTube player");
             }
         });
-    }
-
-    // get movie trailer
-    private void getTrailer(final Movie movie){
-        // create the URL
-        String url = API_BASE_URL + "/movie/" +  Integer.toString(movie.id) + "/videos";
-        // assign request parameters
-        RequestParams params = new RequestParams();
-        params.put(API_KEY_PARAM, getString(R.string.youtube_api_key));
-        client.get(url, params, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // load the results from API
-                try {
-                    JSONArray results = response.getJSONArray("results");
-                    videoId = results.getString(0);
-                } catch (JSONException e) {
-                    logError("Failed to parse now playing movie trailer", e, true);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                logError("Failed to get movie data from Videos endpoint", throwable, true);
-            }
-        });
-    }
-
-    // handle errors, log and report to user
-    private void logError(String message, Throwable error, boolean alertUser){
-        // log the error
-        // report to the user
-        if (alertUser) {
-            // show a long toast with the error message
-            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-        }
     }
 }

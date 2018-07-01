@@ -3,7 +3,9 @@ package com.example.dedwards.flicks.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
+@Parcel
 public class Config {
 
     // base URL for loading images
@@ -12,6 +14,8 @@ public class Config {
     String posterSize;
     // backdrop size when fetching images
     String backdropSize;
+
+    public Config(){}
 
     public Config(JSONObject object) throws JSONException{
         JSONObject images = object.getJSONObject("images");

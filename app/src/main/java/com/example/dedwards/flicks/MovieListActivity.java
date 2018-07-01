@@ -129,7 +129,6 @@ public class MovieListActivity extends AppCompatActivity {
 
     }
 
-
     // handle errors, log and report to user
     private void logError(String message, Throwable error, boolean alertUser){
         // log the error
@@ -140,6 +139,4 @@ public class MovieListActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
         }
     }
-
-
 }
