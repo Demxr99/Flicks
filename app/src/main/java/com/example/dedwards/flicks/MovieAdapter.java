@@ -48,7 +48,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             tvOverview = itemView.findViewById(R.id.tvOverview);
             // adds onClick listener to view holder
             itemView.setOnClickListener(this);
-
         }
 
         @Override

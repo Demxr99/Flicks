@@ -8,7 +8,6 @@ import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
-import com.loopj.android.http.AsyncHttpClient;
 
 import org.parceler.Parcels;
 
@@ -17,7 +16,7 @@ import static com.example.dedwards.flicks.MovieDetailsActivity.VIDEO_ID;
 
 public class MovieTrailerActivity extends YouTubeBaseActivity {
 
-    AsyncHttpClient client;
+    // declare movie object
     Movie movie;
 
     @Override
@@ -25,10 +24,10 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_trailer);
 
-        client = new AsyncHttpClient();
+        // unwrap movie object from previous activity
         movie = Parcels.unwrap(getIntent().getParcelableExtra(Movie.class.getSimpleName()));
 
-        // temporary test video id -- TODO replace with movie trailer video id
+        // retrieve video id from previous activity
         final String videoId = getIntent().getStringExtra(VIDEO_ID);
 
         // resolve the player view from the layout
